@@ -56,16 +56,12 @@
 			background:white;
 			position:absolute;
 		}
-		#outImage {
-			width:50%;
-			margin:20px auto;
-			display: block
-		}
+
 
 		</style>
 	</head>
 	<body>
-		<h5>drag image into frame to edit. - <a href="#" id="download">Download</a>
+		<h5>drag image into frame to edit. - <a href="#" id="download" download="output.jpg">Download</a>
 </h5>
 		<div id="rendererWrapper">
 			<canvas id="renderer" width="5472" height="3648"></canvas>
@@ -82,18 +78,11 @@
 		
 				var img = new Image();
 				
-				var outImage = new Image()
-				outImage.id='outImage'
 
-				outImage.addEventListener('load',function(e){
-					document.body.scrollTop = Number.MAX_SAFE_INTEGER
-				})
 
 				download.addEventListener('click', function (e) {
-					outImage.src = renderer.toDataURL('image/jpeg',1.0);
-					return false
-					
-					e.preventDefault();
+					var dataURL = renderer.toDataURL('image/jpeg',1.0);
+					download.href = dataURL;
 				});
 				
 				var lSlider = new Slider(function(y){
@@ -143,8 +132,7 @@
 				
 				target.source = n;
 				
-				document.body.appendChild(outImage)
-
+			
 				renderer.addEventListener('dragover', function(event) {
 					event.preventDefault();
 					return false;
@@ -155,6 +143,7 @@
 					var reader = new FileReader,
 						file = event.dataTransfer.files[0],
 						medium = file.type.split('/')[0];
+						download.download = file.name
 					reader.onload = function(event) {
 						function resize() {
 						 target.height = element.videoHeight || element.naturalHeight || element.height;
