@@ -84,17 +84,17 @@
 				});
 				
 				var lSlider = new Slider(function(y){
-					n.exposure = 1.5 - (y/100)*3
+					n.exposure = 1.5 - y*3
 					render()
 				})
-				rendererWrapper.appendChild(lSlider)
-				lSlider.style.left = '-30px'
+				rendererWrapper.appendChild(lSlider.element)
+				lSlider.element.style.left = '-30px'
 				var rSlider = new Slider(function(y){
-					n.contrast = 1.5 - (y/100)*1.5
+					n.contrast = 1.5 - y*1.5
 					render()
 				})
-				rendererWrapper.appendChild(rSlider)
-				rSlider.style.right = '-30px'
+				rendererWrapper.appendChild(rSlider.element)
+				rSlider.element.style.right = '-30px'
 				
 				n.source = img;
 				var target = s.target('#renderer');
@@ -103,24 +103,24 @@
 				console.log(n);
 				var histograms = [
 					new Histogram('red',function(y){
-						n.rContrast = 1.5 - (y/100)*1.5
+						n.rContrast = 1.5 - y*1.5
 						render()
 					},function(y){
-						n.rExposure = 1.5 - (y/100)*3
+						n.rExposure = 1.5 - y*3
 						render()
 					}),
 					new Histogram('green',function(y){
-						n.gContrast = 1.5 - (y/100)*1.5
+						n.gContrast = 1.5 - y*1.5
 						render()
 					},function(y){
-						n.gExposure = 1.5 - (y/100)*3
+						n.gExposure = 1.5 - y*3
 						render()
 					}),
 					new Histogram('blue',function(y){
-						n.bContrast = 1.5 - (y/100)*1.5
+						n.bContrast = 1.5 - y*1.5
 						render()
 					},function(y){
-						n.bExposure = 1.5 - (y/100)*3 
+						n.bExposure = 1.5 - y*3 
 						render()
 					})
 				]
@@ -210,11 +210,11 @@
 				canvas.style.imageRendering = 'pixelated'; 
 				
 				var lSlider = new Slider(lCB)
-				div.appendChild(lSlider)
-				lSlider.style.left = '-30px'
+				div.appendChild(lSlider.element)
+				lSlider.element.style.left = '-30px'
 				var rSlider = new Slider(rCB)
-				div.appendChild(rSlider)
-				rSlider.style.right = '-30px'
+				div.appendChild(rSlider.element)
+				rSlider.element.style.right = '-30px'
 				
 				
 				
@@ -227,9 +227,10 @@
 					context.strokeStyle = color
 					context.lineWidth="1";
 					context.beginPath();
+					max = Math.log(max)
 					for(var i = 0; i < 255; i++){
 						context.moveTo(i+.5,100);
-						context.lineTo(i+.5,100-(h[i]/max)*100);
+						context.lineTo(i+.5,100-(Math.log(h[i])/max)*100);
 					}
 					context.stroke();
 					context.closePath();
@@ -253,13 +254,10 @@
 				document.addEventListener('mousemove',function(e){
 					var y = e.clientY - startY
 					y = y < 0 ? 0 : y
-					y = y > 100 ? 100 : y
+					y = y > el.clientHeight ? el.clientHeight : y
 					if(mouseDown){
-					
-						marker.style.top = y + "px"
+						setValue(y/el.clientHeight)
 						startHandle = y
-						moveAction(y)
-
 					}
 					e.preventDefault();
 					return false
@@ -272,7 +270,14 @@
 					mouseDown = false
 
 				})
-				return el
+				function setValue(val){
+					marker.style.top = val*el.clientHeight + "px"
+					moveAction(val)
+				}
+				return {
+					element:el,
+					setValue:setValue
+				}
 			}
 		</script>
 	</body>
