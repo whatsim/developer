@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en-US">
+	<head>
+		<meta charset="UTF-8">
+		<title>color negative edit</title>
+		<script type="text/javascript" src="seriously.js"></script>
+		<script type="text/javascript" src="effects/seriously.negfix.js"></script>
+		<style>
+
+		* {
+			-webkit-touch-callout: none;
+			-webkit-user-select: none;
+			-khtml-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
+		}
+
+		body {
+			background-color: #222;
+		}
+
+		#renderer {
+			width:100%;
+
+			display:block;
+			background:#2a2a2a;
+		}
+		#rendererWrapper {
+			position:relative;
+			width:80%;
+			margin:0 auto;
+		}
+		.histo {
+			display:block;
+			margin:10px auto;
+			position:relative;
+			width:255px;
+		}
+		h5 {
+			color:white;
+			text-align:center;
+			font-weight:100;
+			font-family:sans-serif;
+		}
+		.slider {
+			position:absolute;
+			width:20px;
+			height:100px;
+			background:#2a2a2a;
+			top:0
+		}
+		.marker {
+			width:20px;
+			height:1px;
+			background:white;
+			position:absolute;
+		}
+
+
+		</style>
+	</head>
+	<body>
+		<h5>drag image into frame to edit. - <a href="#" id="download" download="output.jpg">Download</a>
+</h5>
+		<div id="rendererWrapper">
+			<canvas id="renderer" width="5472" height="3648"></canvas>
+		</div>
+		
+		<script type="text/javascript">
+	
+		
+	
+			window.addEventListener('DOMContentLoaded', function() {
+				var s = Seriously();
+					
+				var n = s.effect('negfix')
+		
+				var img = new Image();
+				
+				download.addEventListener('click', function (e) {
+					var dataURL = renderer.toDataURL('image/jpeg');
+					download.href = dataURL;
+				});
+				
+				var lSlider = new Slider(function(y){
+					n.exposure = 1.5 - (y/100)*3
+					render()
+				})
+				rendererWrapper.appendChild(lSlider)
+				lSlider.style.left = '-30px'
+				var rSlider = new Slider(function(y){
+					n.contrast = 1.5 - (y/100)*1.5
+					render()
+				})
+				rendererWrapper.appendChild(rSlider)
+				rSlider.style.right = '-30px'
+				
+				n.source = img;
+				var target = s.target('#renderer');
+				var histoCanvas = document.createElement('canvas');
+				var histoContext = histoCanvas.getContext('2d');
+				console.log(n);
+				var histograms = [
+					new Histogram('red',function(y){
+						n.rContrast = 1.5 - (y/100)*1.5
+						render()
+					},function(y){
+						n.rExposure = 1.5 - (y/100)*3
+						render()
+					}),
+					new Histogram('green',function(y){
+						n.gContrast = 1.5 - (y/100)*1.5
+						render()
+					},function(y){
+						n.gExposure = 1.5 - (y/100)*3
+						render()
+					}),
+					new Histogram('blue',function(y){
+						n.bContrast = 1.5 - (y/100)*1.5
+						render()
+					},function(y){
+						n.bExposure = 1.5 - (y/100)*3 
+						render()
+					})
+				]
+				
+				for(var i = 0; i < histograms.length; i++) document.body.appendChild(histograms[i].element)
+				
+				
+				target.source = n;
+				
+			
+				renderer.addEventListener('dragover', function(event) {
+					event.preventDefault();
+					return false;
+				});
+		
+				renderer.addEventListener('drop', function(event) {
+					event.preventDefault();
+					var reader = new FileReader,
+						file = event.dataTransfer.files[0],
+						medium = file.type.split('/')[0];
+						download.download = file.name
+					reader.onload = function(event) {
+						function resize() {
+						 target.height = element.videoHeight || element.naturalHeight || element.height;
+						 target.width = element.videoWidth || element.naturalWidth || element.width;
+	
+						 render();
+						}
+		
+						var element;
+						if (medium === 'image') {
+							element = img;
+							element.onload = resize;
+							element.src = event.target.result;
+						} else {
+							return false;
+						}
+		
+					};
+		
+					if (medium === 'image') {
+						reader.readAsDataURL(file);
+					}
+		
+					return false;
+				}, true);
+				
+				function render(){
+					target.render()
+					drawHistograms()
+				}
+
+				function drawHistograms(){
+					histoCanvas.width = Math.round(target.width/16)
+					histoCanvas.height = Math.round(target.height/16)
+
+					histoContext.drawImage(target.original,0,0,histoCanvas.width,histoCanvas.height);
+					var data = histoContext.getImageData(0,0,histoCanvas.width,histoCanvas.height)
+					
+					var red = {}
+					var green = {}
+					var blue = {}
+					var maxs = [0,0,0]
+					for(var i = 0; i < data.data.byteLength; i += 4){
+						red[data.data[i]] = !red[data.data[i]] ? 1 : red[data.data[i]] + 1
+						green[data.data[i+1]] = !green[data.data[i+1]] ? 1 : green[data.data[i+1]] + 1
+						blue[data.data[i+2]] = !blue[data.data[i+2]] ? 1 : blue[data.data[i+2]] + 1
+						maxs[0] = red[data.data[i]] > maxs[0] ? red[data.data[i]] : maxs[0]
+						maxs[1] = green[data.data[i+1]] > maxs[1] ? green[data.data[i+1]] : maxs[1]
+						maxs[2] = blue[data.data[i+2]] > maxs[2] ? blue[data.data[i+2]] : maxs[2]
+					}
+
+					histograms[0].draw(red,maxs[0])
+					histograms[1].draw(green,maxs[1])
+					histograms[2].draw(blue,maxs[2])
+				}
+				
+			});
+			
+			function Histogram(c,lCB,rCB){
+				var div = document.createElement('div')
+				var canvas = document.createElement('canvas');
+				div.appendChild(canvas)
+				div.classList.add('histo')
+				canvas.width = 255;
+				canvas.height = 100;
+				canvas.style.imageRendering = 'pixelated'; 
+				
+				var lSlider = new Slider(lCB)
+				div.appendChild(lSlider)
+				lSlider.style.left = '-30px'
+				var rSlider = new Slider(rCB)
+				div.appendChild(rSlider)
+				rSlider.style.right = '-30px'
+				
+				
+				
+				var context = canvas.getContext('2d');
+				
+				var color = c
+				
+				function draw(h,max){
+					canvas.width = 255;
+					context.strokeStyle = color
+					context.lineWidth="1";
+					context.beginPath();
+					for(var i = 0; i < 255; i++){
+						context.moveTo(i+.5,100);
+						context.lineTo(i+.5,100-(h[i]/max)*100);
+					}
+					context.stroke();
+					context.closePath();
+				}
+				return {
+					draw : draw,
+					element : div
+				}
+
+			}
+			function Slider(cb){
+				var el = document.createElement('div')
+				el.classList.add('slider')
+				var marker = document.createElement('div')
+				marker.classList.add('marker')
+				el.appendChild(marker)
+				var moveAction = cb;
+				var mouseDown = false;
+				var startY = 0;
+				var startHandle = 0
+				document.addEventListener('mousemove',function(e){
+					var y = e.clientY - startY
+					y = y < 0 ? 0 : y
+					y = y > 100 ? 100 : y
+					if(mouseDown){
+					
+						marker.style.top = y + "px"
+						startHandle = y
+						moveAction(y)
+
+					}
+					e.preventDefault();
+					return false
+				})
+				el.addEventListener('mousedown',function(e){
+					mouseDown = true
+					startY = e.clientY - startHandle
+				})
+				document.addEventListener('mouseup',function(e){
+					mouseDown = false
+
+				})
+				return el
+			}
+		</script>
+	</body>
+</html>
