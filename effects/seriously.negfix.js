@@ -78,7 +78,7 @@
 			rContrast: {
 				type: 'number',
 				uniform: 'rContrast',
-				defaultValue: 1,
+				defaultValue: .5,
 				min: 0,
 				max: 1.5
 			},
@@ -92,7 +92,7 @@
 			bContrast: {
 				type: 'number',
 				uniform: 'bContrast',
-				defaultValue: 1,
+				defaultValue: .5,
 				min: 0,
 				max: 1.5
 			},
@@ -106,7 +106,7 @@
 			gContrast: {
 				type: 'number',
 				uniform: 'gContrast',
-				defaultValue: 1,
+				defaultValue: .5,
 				min: 0,
 				max: 1.5
 			},
@@ -120,7 +120,7 @@
 			contrast: {
 				type: 'number',
 				uniform: 'contrast',
-				defaultValue: 1,
+				defaultValue: .5,
 				min: 0,
 				max: 1.5
 			},

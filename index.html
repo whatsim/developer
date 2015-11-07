@@ -102,24 +102,24 @@
 				var histoContext = histoCanvas.getContext('2d');
 				console.log(n);
 				var histograms = [
-					new Histogram('red',function(y){
+					new Histogram('red',.33,function(y){
 						n.rContrast = 1.5 - y*1.5
 						render()
-					},function(y){
+					},.5,function(y){
 						n.rExposure = 1.5 - y*3
 						render()
 					}),
-					new Histogram('green',function(y){
+					new Histogram('green',.33,function(y){
 						n.gContrast = 1.5 - y*1.5
 						render()
-					},function(y){
+					},.5,function(y){
 						n.gExposure = 1.5 - y*3
 						render()
 					}),
-					new Histogram('blue',function(y){
+					new Histogram('blue',.33,function(y){
 						n.bContrast = 1.5 - y*1.5
 						render()
-					},function(y){
+					},.5,function(y){
 						n.bExposure = 1.5 - y*3 
 						render()
 					})
@@ -148,6 +148,8 @@
 						 target.width = element.videoWidth || element.naturalWidth || element.width;
 	
 						 render();
+						 lSlider.setValue(.33)
+						 rSlider.setValue(.5)
 						}
 		
 						var element;
@@ -200,7 +202,7 @@
 				
 			});
 			
-			function Histogram(c,lCB,rCB){
+			function Histogram(c,lS,lCB,rS,rCB){
 				var div = document.createElement('div')
 				var canvas = document.createElement('canvas');
 				div.appendChild(canvas)
@@ -212,17 +214,22 @@
 				var lSlider = new Slider(lCB)
 				div.appendChild(lSlider.element)
 				lSlider.element.style.left = '-30px'
+				
 				var rSlider = new Slider(rCB)
 				div.appendChild(rSlider.element)
 				rSlider.element.style.right = '-30px'
-				
-				
 				
 				var context = canvas.getContext('2d');
 				
 				var color = c
 				
+				window.requestAnimationFrame(function(){
+					lSlider.setValue(lS)
+					rSlider.setValue(rS)
+				})
+
 				function draw(h,max){
+
 					canvas.width = 255;
 					context.strokeStyle = color
 					context.lineWidth="1";
@@ -272,6 +279,7 @@
 				})
 				function setValue(val){
 					marker.style.top = val*el.clientHeight + "px"
+					startHandle = val*el.clientHeight
 					moveAction(val)
 				}
 				return {
