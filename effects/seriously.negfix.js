@@ -27,14 +27,14 @@
 
 				'uniform sampler2D source;',
 
-				'uniform float rContrast;',
-				'uniform float gContrast;',
-				'uniform float bContrast;',
-
-				'uniform float rExposure;',
-				'uniform float gExposure;',
-				'uniform float bExposure;',
 				'const float halfsies = 0.5;',
+
+				'uniform float rBlackLevel;',
+				'uniform float rWhiteLevel;',
+				'uniform float gBlackLevel;',
+				'uniform float gWhiteLevel;',
+				'uniform float bBlackLevel;',
+				'uniform float bWhiteLevel;',
 
 				'uniform float contrast;',
 				'uniform float exposure;',
@@ -57,9 +57,7 @@
 
 				'	pixel = vec4(1.0-c,1.0-mO,1.0-yO,1.0);',
 
-				'	pixel = vec4(pow(2.0, rExposure) * pixel.r,pow(2.0, gExposure) * pixel.g,pow(2.0, bExposure) * pixel.b, 1.0);',
-				'	pixel = vec4((pixel.r - halfsies) * rContrast + halfsies, (pixel.g - halfsies) * gContrast + halfsies, (pixel.b - halfsies) * bContrast + halfsies, 1.0);',
-
+				'	pixel = vec4(mix(rBlackLevel,rWhiteLevel,pixel.r),mix(gBlackLevel,gWhiteLevel,pixel.g),mix(bBlackLevel,bWhiteLevel,pixel.b), 1.0);',
 				'	pixel = vec4(pow(2.0, exposure) * pixel.rgb, 1.0);',
 				'	pixel = vec4((pixel.rgb - half3) * contrast + half3,1.0);',
 
@@ -75,47 +73,47 @@
 				uniform: 'source',
 				shaderDirty: false
 			},
-			rContrast: {
+			rWhiteLevel: {
 				type: 'number',
-				uniform: 'rContrast',
-				defaultValue: .5,
-				min: 0,
+				uniform: 'rWhiteLevel',
+				defaultValue: 1,
+				min: .5,
 				max: 1.5
 			},
-			rExposure: {
+			rBlackLevel: {
 				type: 'number',
-				uniform: 'rExposure',
+				uniform: 'rBlackLevel',
 				defaultValue: 0,
-				min: -1.5,
+				min: -.5,
+				max: .5
+			},
+			gWhiteLevel: {
+				type: 'number',
+				uniform: 'gWhiteLevel',
+				defaultValue: 1,
+				min: .5,
 				max: 1.5
 			},
-			bContrast: {
+			gBlackLevel: {
 				type: 'number',
-				uniform: 'bContrast',
-				defaultValue: .5,
-				min: 0,
-				max: 1.5
-			},
-			bExposure: {
-				type: 'number',
-				uniform: 'bExposure',
+				uniform: 'gBlackLevel',
 				defaultValue: 0,
-				min: -1.5,
+				min: -.5,
+				max: .5
+			},
+			bWhiteLevel: {
+				type: 'number',
+				uniform: 'bWhiteLevel',
+				defaultValue: 1,
+				min: .5,
 				max: 1.5
 			},
-			gContrast: {
+			bBlackLevel: {
 				type: 'number',
-				uniform: 'gContrast',
-				defaultValue: .5,
-				min: 0,
-				max: 1.5
-			},
-			gExposure: {
-				type: 'number',
-				uniform: 'gExposure',
+				uniform: 'bBlackLevel',
 				defaultValue: 0,
-				min: -1.5,
-				max: 1.5
+				min: -.5,
+				max: .5
 			},
 			contrast: {
 				type: 'number',

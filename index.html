@@ -104,25 +104,25 @@
 				var histoContext = histoCanvas.getContext('2d');
 				console.log(n);
 				var histograms = [
-					new Histogram('red',.33,function(y){
-						n.rContrast = 1.5 - y*1.5
+					new Histogram('red',.5,function(y){
+						n.rBlackLevel = (1-y)-.5
 						render()
 					},.5,function(y){
-						n.rExposure = 1.5 - y*3
+						n.rWhiteLevel = (1-y)+.5
 						render()
 					}),
-					new Histogram('green',.33,function(y){
-						n.gContrast = 1.5 - y*1.5
+					new Histogram('green',.5,function(y){
+						n.gBlackLevel = (1-y)-.5
 						render()
 					},.5,function(y){
-						n.gExposure = 1.5 - y*3
+						n.gWhiteLevel = (1-y)+.5
 						render()
 					}),
-					new Histogram('blue',.33,function(y){
-						n.bContrast = 1.5 - y*1.5
+					new Histogram('blue',.5,function(y){
+						n.bBlackLevel = (1-y)-.5
 						render()
 					},.5,function(y){
-						n.bExposure = 1.5 - y*3 
+						n.bWhiteLevel = (1-y)+.5
 						render()
 					})
 				]
