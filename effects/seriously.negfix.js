@@ -77,43 +77,43 @@
 				type: 'number',
 				uniform: 'rWhiteLevel',
 				defaultValue: 1,
-				min: .5,
-				max: 1.5
+				min: 0,
+				max: 2
 			},
 			rBlackLevel: {
 				type: 'number',
 				uniform: 'rBlackLevel',
 				defaultValue: 0,
-				min: -.5,
-				max: .5
+				min: -1,
+				max: 1
 			},
 			gWhiteLevel: {
 				type: 'number',
 				uniform: 'gWhiteLevel',
 				defaultValue: 1,
-				min: .5,
-				max: 1.5
+				min: 0,
+				max: 2
 			},
 			gBlackLevel: {
 				type: 'number',
 				uniform: 'gBlackLevel',
 				defaultValue: 0,
-				min: -.5,
-				max: .5
+				min: -1,
+				max: 1
 			},
 			bWhiteLevel: {
 				type: 'number',
 				uniform: 'bWhiteLevel',
 				defaultValue: 1,
-				min: .5,
-				max: 1.5
+				min: 0,
+				max: 2
 			},
 			bBlackLevel: {
 				type: 'number',
 				uniform: 'bBlackLevel',
 				defaultValue: 0,
-				min: -.5,
-				max: .5
+				min: -1,
+				max: 1
 			},
 			contrast: {
 				type: 'number',

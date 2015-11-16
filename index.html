@@ -61,15 +61,12 @@
 		</style>
 	</head>
 	<body>
-		<h5>drag image into frame to edit. - <a href="#" id="download" download="output.jpg">Download</a>
-</h5>
+		<h5>drag image into frame to edit. - <a href="#" id="download">Download</a></h5>
 		<div id="rendererWrapper">
 			<canvas id="renderer" width="5472" height="3648"></canvas>
 		</div>
 		
 		<script type="text/javascript">
-	
-		
 	
 			window.addEventListener('DOMContentLoaded', function() {
 				var s = Seriously();
@@ -81,7 +78,7 @@
 
 
 				download.addEventListener('click', function (e) {
-					var dataURL = renderer.toDataURL('image/jpeg',1.0);
+					var dataURL = renderer.toDataURL('image/jpeg',1);
 					download.href = dataURL;
 				});
 				
@@ -105,24 +102,24 @@
 				console.log(n);
 				var histograms = [
 					new Histogram('red',.5,function(y){
-						n.rBlackLevel = (1-y)-.5
+						n.rBlackLevel = (1-y)*2 - 1
 						render()
 					},.5,function(y){
-						n.rWhiteLevel = (1-y)+.5
+						n.rWhiteLevel = (1-y)*2
 						render()
 					}),
 					new Histogram('green',.5,function(y){
-						n.gBlackLevel = (1-y)-.5
+						n.gBlackLevel = (1-y)*2 - 1
 						render()
 					},.5,function(y){
-						n.gWhiteLevel = (1-y)+.5
+						n.gWhiteLevel = (1-y)*2
 						render()
 					}),
 					new Histogram('blue',.5,function(y){
-						n.bBlackLevel = (1-y)-.5
+						n.bBlackLevel = (1-y)*2 - 1
 						render()
 					},.5,function(y){
-						n.bWhiteLevel = (1-y)+.5
+						n.bWhiteLevel = (1-y)*2
 						render()
 					})
 				]
@@ -143,7 +140,7 @@
 					var reader = new FileReader,
 						file = event.dataTransfer.files[0],
 						medium = file.type.split('/')[0];
-						download.download = file.name
+						
 					reader.onload = function(event) {
 						function resize() {
 						 target.height = element.videoHeight || element.naturalHeight || element.height;
